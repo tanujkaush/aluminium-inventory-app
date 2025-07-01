@@ -4,7 +4,10 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'   # Kuch bhi likh lo, must be secret
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///inventory.db'
+import os
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'inventory.db')
+
 db = SQLAlchemy(app)
 
 login_manager = LoginManager()
