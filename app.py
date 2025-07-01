@@ -31,6 +31,14 @@ class Item(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@app.route('/create_admin')
+def create_admin():
+    from import db, User  # Use actual imports if needed
+    admin = User(username='admin', password='admin123')
+    db.session.add(admin)
+    db.session.commit()
+    return 'Admin created'
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
