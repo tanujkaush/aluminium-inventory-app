@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aluminium Inventory</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Welcome, {{ username }}! | <a href="/logout">Logout</a></h2>
+    <h3>Inventory Items</h3>
+
+    <!-- Low Stock AI Alert Block (Yahan se shuru) -->
+    {% set low_stock_items = [] %}
+    {% for item in items %}
+        {% if item[5]|int <= 10 %}  {# 10 ko aap chahe toh dynamic bhi bana sakte ho #}
+            {% set _ = low_stock_items.append(item) %}
+        {% endif %}
+    {% endfor %}
+
+    {% if low_stock_items %}
+        <div class="alert alert-danger" role="alert">
+            <strong>⚠️ Low Stock Alert (AI Suggestion):</strong>
+            <ul>
+                {% for item in low_stock_items %}
+                    <li>
+                        <b>{{ item[1] }}</b> - Only <b>{{ item[5] }}</b> left!
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    <!-- Low Stock AI Alert Block (Yahan tak) -->
+
+    <form action="/add" method="post">
+        Name: <input type="text" name="name" required>
+        Quantity: <input type="number" name="quantity" required>
+        Min Quantity: <input type="number" name="min_quantity" required>
+        Description: <input type="text" name="description">
+        <button type="submit">Add Item</button>
+    </form>
+    <hr>
+    <form method="POST" action="/add" class="mb-4">
+        <div class="form-row">
+            <div class="col">
+                <input type="text" name="item_code" class="form-control" placeholder="Item Code" required>
+            </div>
+            <div class="col">
+                <input type="text" name="description" class="form-control" placeholder="Description" required>
+            </div>
+            <div class="col">
+                <input type="text" name="gauge" class="form-control" placeholder="Gauge" required>
+            </div>
+            <div class="col">
+                <input type="text" name="colour" class="form-control" placeholder="Colour" required>
+            </div>
+            <div class="col">
+                <input type="number" name="quantity" class="form-control" placeholder="Quantity" required>
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Add Item</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Item Code</th>
+                <th>Description</th>
+                <th>Gauge</th>
+                <th>Colour</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item[0] }}</td>
+                <td>{{ item[1] }}</td>
+                <td>{{ item[2] }}</td>
+                <td>{{ item[3] }}</td>
+                <td>{{ item[4] }}</td>
+                <td>{{ item[5] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
