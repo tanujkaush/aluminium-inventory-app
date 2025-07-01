@@ -20,7 +20,9 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
+    min_quantity = db.Column(db.Integer, nullable=False, default=10)   # naya column
     description = db.Column(db.String(200))
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -55,19 +57,23 @@ def index():
 @login_required
 def add():
     name = request.form['name']
-    quantity = request.form['quantity']
+    quantity = int(request.form['quantity'])
+    min_quantity = int(request.form['min_quantity'])
     description = request.form['description']
-    item = Item(name=name, quantity=quantity, description=description)
+    item = Item(name=name, quantity=quantity, min_quantity=min_quantity, description=description)
     db.session.add(item)
     db.session.commit()
     return redirect(url_for('index'))
 
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        # Pehli bar user add karne ke liye (admin)
-        if not User.query.filter_by(username='admin').first():
-            admin = User(username='admin', password='admin123')
-            db.session.add(admin)
-            db.session.commit()
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
+
+    import os
+port = int(os.environ.get("PORT", 5000))
+app.run(host='0.0.0.0', port=port)
+
