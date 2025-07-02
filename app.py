@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'   # Kuch bhi likh lo, must be secret
+app.secret_key = 'your_secret_key'
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'inventory.db')
@@ -23,9 +23,8 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    min_quantity = db.Column(db.Integer, nullable=False, default=10)   # naya column
+    min_quantity = db.Column(db.Integer, nullable=False, default=10)
     description = db.Column(db.String(200))
-
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -33,11 +32,14 @@ def load_user(user_id):
 
 @app.route('/create_admin')
 def create_admin():
-    admin = User(username='admin', password='admin123')
-    db.session.add(admin)
-    db.session.commit()
-    return 'Admin created'
-
+    user = User.query.filter_by(username='admin').first()
+    if not user:
+        admin = User(username='admin', password='admin123')
+        db.session.add(admin)
+        db.session.commit()
+        return 'Admin created'
+    else:
+        return 'Admin already exists'
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -76,15 +78,8 @@ def add():
     db.session.commit()
     return redirect(url_for('index'))
 
-
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
-
-    import os
-port = int(os.environ.get("PORT", 5000))
-app.run(host='0.0.0.0', port=port)
-
