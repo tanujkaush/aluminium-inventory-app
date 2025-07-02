@@ -12,7 +12,7 @@
     <!-- Low Stock AI Alert Block (Safe) -->
     {% set low_stock_items = [] %}
     {% for item in items %}
-        {% if item|length > 5 and item[5]|int <= 10 %}
+        {% if item.quantity <= item.min_quantity %}
             {% set _ = low_stock_items.append(item) %}
         {% endif %}
     {% endfor %}
@@ -23,7 +23,7 @@
             <ul>
                 {% for item in low_stock_items %}
                     <li>
-                        <b>{{ item[1] }}</b> - Only <b>{{ item[5] }}</b> left!
+                        <b>{{ item.name }}</b> - Only <b>{{ item.quantity }}</b> left! (Min required: <b>{{ item.min_quantity }}</b>)
                     </li>
                 {% endfor %}
             </ul>
@@ -31,60 +31,33 @@
     {% endif %}
     <!-- Low Stock AI Alert Block (Safe block end) -->
 
-    <form action="/add" method="post">
+    <form action="/add" method="post" class="mb-3">
         Name: <input type="text" name="name" required>
         Quantity: <input type="number" name="quantity" required>
         Min Quantity: <input type="number" name="min_quantity" required>
         Description: <input type="text" name="description">
         <button type="submit">Add Item</button>
     </form>
-    <hr>
-    <form method="POST" action="/add" class="mb-4">
-        <div class="form-row">
-            <div class="col">
-                <input type="text" name="item_code" class="form-control" placeholder="Item Code" required>
-            </div>
-            <div class="col">
-                <input type="text" name="description" class="form-control" placeholder="Description" required>
-            </div>
-            <div class="col">
-                <input type="text" name="gauge" class="form-control" placeholder="Gauge" required>
-            </div>
-            <div class="col">
-                <input type="text" name="colour" class="form-control" placeholder="Colour" required>
-            </div>
-            <div class="col">
-                <input type="number" name="quantity" class="form-control" placeholder="Quantity" required>
-            </div>
-            <div class="col">
-                <button type="submit" class="btn btn-primary">Add Item</button>
-            </div>
-        </div>
-    </form>
 
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Item Code</th>
+                <th>Name</th>
                 <th>Description</th>
-                <th>Gauge</th>
-                <th>Colour</th>
+                <th>Min Quantity</th>
                 <th>Quantity</th>
             </tr>
         </thead>
         <tbody>
             {% for item in items %}
-                {% if item|length > 5 %}
-                <tr>
-                    <td>{{ item[0] }}</td>
-                    <td>{{ item[1] }}</td>
-                    <td>{{ item[2] }}</td>
-                    <td>{{ item[3] }}</td>
-                    <td>{{ item[4] }}</td>
-                    <td>{{ item[5] }}</td>
-                </tr>
-                {% endif %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.min_quantity }}</td>
+                <td>{{ item.quantity }}</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
