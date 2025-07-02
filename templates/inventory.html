@@ -9,10 +9,10 @@
     <h2>Welcome, {{ username }}! | <a href="/logout">Logout</a></h2>
     <h3>Inventory Items</h3>
 
-    <!-- Low Stock AI Alert Block (Yahan se shuru) -->
+    <!-- Low Stock AI Alert Block (Safe) -->
     {% set low_stock_items = [] %}
     {% for item in items %}
-        {% if item[5]|int <= 10 %}  {# 10 ko aap chahe toh dynamic bhi bana sakte ho #}
+        {% if item|length > 5 and item[5]|int <= 10 %}
             {% set _ = low_stock_items.append(item) %}
         {% endif %}
     {% endfor %}
@@ -29,7 +29,7 @@
             </ul>
         </div>
     {% endif %}
-    <!-- Low Stock AI Alert Block (Yahan tak) -->
+    <!-- Low Stock AI Alert Block (Safe block end) -->
 
     <form action="/add" method="post">
         Name: <input type="text" name="name" required>
@@ -75,14 +75,16 @@
         </thead>
         <tbody>
             {% for item in items %}
-            <tr>
-                <td>{{ item[0] }}</td>
-                <td>{{ item[1] }}</td>
-                <td>{{ item[2] }}</td>
-                <td>{{ item[3] }}</td>
-                <td>{{ item[4] }}</td>
-                <td>{{ item[5] }}</td>
-            </tr>
+                {% if item|length > 5 %}
+                <tr>
+                    <td>{{ item[0] }}</td>
+                    <td>{{ item[1] }}</td>
+                    <td>{{ item[2] }}</td>
+                    <td>{{ item[3] }}</td>
+                    <td>{{ item[4] }}</td>
+                    <td>{{ item[5] }}</td>
+                </tr>
+                {% endif %}
             {% endfor %}
         </tbody>
     </table>
